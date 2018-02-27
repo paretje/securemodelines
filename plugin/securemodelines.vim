@@ -121,6 +121,11 @@ fun! <SID>DoModeline(line) abort
 endfun
 
 fun! <SID>DoModelines() abort
+    if exists('b:secure_modelines_done')
+        return
+    endif
+    let b:secure_modelines_done = 1
+
     if line("$") > g:secure_modelines_modelines
         let l:lines={ }
         call map(filter(getline(1, g:secure_modelines_modelines) +
@@ -142,6 +147,6 @@ endfun
 
 aug SecureModeLines
     au!
-    au BufRead,StdinReadPost * :call <SID>DoModelines()
+    au BufWinEnter * call <SID>DoModelines()
+    au BufRead * unlet! b:secure_modelines_done
 aug END
-
